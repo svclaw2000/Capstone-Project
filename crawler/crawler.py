@@ -11,7 +11,7 @@ from tqdm import tqdm
 
 
 def split_content_tag(raw_string: str):
-    pattern = u'#[_a-zA-Z0-9\u3130-\u318F\uAC00-\uD7A3'+''.join(emoji.UNICODE_EMOJI.keys())+']+'
+    pattern = u'#' + (u'[_a-zA-Z0-9\u3130-\u318F\uAC00-\uD7A3'+''.join(emoji.UNICODE_EMOJI.keys())+']+').replace('#', '')
     tags = re.findall(pattern, raw_string)
     content = re.sub(pattern, '', raw_string)
     return tags, content
