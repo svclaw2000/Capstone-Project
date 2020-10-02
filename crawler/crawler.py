@@ -11,13 +11,11 @@ from tqdm import tqdm
 import parmap
 import logging
 
-
 def split_content_tag(raw_string: str):
     pattern = u'#' + (u'[_a-zA-Z0-9\u3130-\u318F\uAC00-\uD7A3'+''.join(emoji.UNICODE_EMOJI.keys())+']+').replace('#', '')
     tags = re.findall(pattern, raw_string)
     content = re.sub(pattern, '', raw_string)
     return tags, content
-
 
 def get_data_from_hashtag(hashtag: str, data_path = './data'):
     current_datetime = datetime.now().strftime('%Y%m%d_%H%M%S')
@@ -63,12 +61,15 @@ def get_data_from_hashtag(hashtag: str, data_path = './data'):
         writer.writerows(ret)
     print(dir_name, 'finish')
 
-
 def run(multiprocessing=False, processes=4):
     config = ConfigParser()
     config.load_from_file('config/crawler.conf')
-    hashtags = config['tags']
     data_path = config['data_path']
+    tags = config['tags']
+    hashtags = []
+    for category in tags:
+        hashtags.append(category)
+        hashtags.extend(tags[category])
     print('크롤링 대상:', hashtags)
 
     if multiprocessing:
