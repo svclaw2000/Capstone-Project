@@ -5,6 +5,7 @@ import emoji
 import re
 import numpy as np
 from utils.config_handler import ConfigParser
+from tqdm import tqdm
 
 pattern = (u'[\u3130-\u318F'+''.join(emoji.UNICODE_EMOJI.keys())+']+').replace('#', '')
 
@@ -31,4 +32,4 @@ class Extractor:
             return []
 
     def extract_words(self, sents):
-        return [self.tokenize(re.sub(pattern, '', s)) if s is not np.nan else [] for s in sents]
+        return [self.tokenize(re.sub(pattern, '', s)) if s is not np.nan else [] for s in tqdm(sents)]
