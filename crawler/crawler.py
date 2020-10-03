@@ -68,7 +68,6 @@ def run(multiprocessing=False, processes=4):
     tags = config['tags']
     hashtags = []
     for category in tags:
-        hashtags.append(category)
         hashtags.extend(tags[category])
     print('크롤링 대상:', hashtags)
 
