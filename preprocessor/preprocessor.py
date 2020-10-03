@@ -36,10 +36,11 @@ def load_data(root_dir: str, tags: list, start_date: str = None, end_date: str =
         except:
             continue
 
-    ret = pd.concat(metas)
-    print('Total: %d, Duplicated: %d, Error: %d, Left: %d' %(n_total, n_total-len(ret), n_error, len(ret)))
+    data = pd.concat(metas)
+    data = data.drop_duplicates(['id'])
+    print('Total: %d, Duplicated: %d, Error: %d, Left: %d' %(n_total, n_total-len(data), n_error, len(data)))
 
-    return ret
+    return data
 
 def run():
     config = ConfigParser()
