@@ -6,7 +6,7 @@ from preprocessor.word_extractor import Extractor
 import pickle
 
 
-def load_data(root_dir: str, tags: list):
+def load_data(root_dir: str, tags: list, start_date: str = None, end_date: str = None):
     dirs = os.listdir(root_dir)
     metas = []
     n_total = 0
@@ -14,6 +14,9 @@ def load_data(root_dir: str, tags: list):
 
     for d in tqdm(dirs):
         try:
+            if not start_date <= d.split('_')[0] <= end_date:
+                continue
+
             meta = pd.read_csv('%s/%s/metadata.csv' %(root_dir, d))
             n_total += len(meta)
 
@@ -44,7 +47,7 @@ def run():
     config.load_from_file('config/preprocessor.conf')
     pos = config['pos']
 
-    data = load_data(config['data_path'], config['tags'])
+    data = load_data(config['data_path'], config['tags'], config['start_date'], config['end_date'])
     extractor = Extractor()
     tokens = extractor.extract_words(data['content'])
     for p in pos:
