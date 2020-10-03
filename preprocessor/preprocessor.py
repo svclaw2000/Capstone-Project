@@ -1,0 +1,53 @@
+import pandas as pd
+from utils.config_handler import ConfigParser
+import os
+from tqdm import tqdm
+from preprocessor.word_extractor import Extractor
+import pickle
+
+
+def load_data(root_dir: str, tags: list):
+    dirs = os.listdir(root_dir)
+    metas = []
+    n_total = 0
+    n_error = 0
+
+    for d in tqdm(dirs):
+        try:
+            meta = pd.read_csv('%s/%s/metadata.csv' %(root_dir, d))
+            n_total += len(meta)
+
+            tag = d.split('_')[-1]
+            has_category = False
+            for category in tags:
+                if tag in tags[category]:
+                    meta['category1'] = category
+                    meta['category2'] = tag
+                    has_category = True
+                    break
+
+            if not has_category:
+                n_error += len(meta)
+                continue
+            metas.append(meta)
+        except:
+            continue
+
+    ret = pd.concat(metas)
+    print('Total: %d, Duplicated: %d, Error: %d, Left: %d' %(n_total, n_total-len(ret), n_error, len(ret)))
+
+    return ret
+
+def run():
+    config = ConfigParser()
+    config.load_from_file('config/crawler.conf')
+    config.load_from_file('config/preprocessor.conf')
+    pos = config['pos']
+
+    data = load_data(config['data_path'], config['tags'])
+    extractor = Extractor()
+    tokens = extractor.extract_words(data['content'])
+    for p in pos:
+        data[p[1:]] = [[t for t in token if p in t] for token in tokens]
+    data.to_csv('%s.csv' %config['output_path'], index=False)
+    pickle.dump(data, open('%s.pkl' %config['output_path'], 'wb'))
