@@ -7,7 +7,7 @@ import numpy as np
 from utils.config_handler import ConfigParser
 from tqdm import tqdm
 
-pattern = (u'[\u3130-\u318F'+''.join(emoji.UNICODE_EMOJI.keys())+']+').replace('#', '')
+pattern = (u'[\u3130-\u318F'+''.join(emoji.UNICODE_EMOJI.keys())+'\n]+').replace('#', '')
 
 class Extractor:
     def __init__(self):
@@ -22,7 +22,7 @@ class Extractor:
 
     def tokenize(self, sent):
         try:
-            words = self.komoran.pos(sent, join=True)
+            words = self.komoran.pos(re.sub(pattern, ' ', sent), join=True)
             pos = self.config['pos']
             ret = []
             for p in pos:
@@ -32,4 +32,4 @@ class Extractor:
             return []
 
     def extract_words(self, sents):
-        return [self.tokenize(re.sub(pattern, '', s)) if s is not np.nan else [] for s in tqdm(sents)]
+        return [self.tokenize(s) for s in tqdm(sents)]
