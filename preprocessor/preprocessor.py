@@ -4,10 +4,11 @@ import os
 from tqdm import tqdm
 from preprocessor.word_extractor import Extractor
 import pickle
-
+import re
 
 def load_data(root_dir: str, tags: list, start_date: str = None, end_date: str = None):
     dirs = os.listdir(root_dir)
+    dirs = [d for d in dirs if os.path.isdir('%s/%s' %(root_dir, d))]
     metas = []
     n_total = 0
     n_error = 0
@@ -32,6 +33,9 @@ def load_data(root_dir: str, tags: list, start_date: str = None, end_date: str =
             if not has_category:
                 n_error += len(meta)
                 continue
+
+            meta['image_path'] = '%s/img_' %d + meta['id'].astype(str) + '.jpg'
+
             metas.append(meta)
         except:
             continue
@@ -42,6 +46,12 @@ def load_data(root_dir: str, tags: list, start_date: str = None, end_date: str =
 
     return data
 
+def filter_korean(s):
+    try:
+        return re.sub('[^\uAC00-\uD7AF]+', '', s)
+    except:
+        return ''
+
 def run():
     config = ConfigParser()
     config.load_from_file('config/crawler.conf')
@@ -49,6 +59,7 @@ def run():
     pos = config['pos']
 
     data = load_data(config['data_path'], config['tags'], config['start_date'], config['end_date'])
+    data['clean_text'] = [filter_korean(s) for s in data['content']]
     extractor = Extractor()
     tokens = extractor.extract_words(data['content'])
     for p in pos:
