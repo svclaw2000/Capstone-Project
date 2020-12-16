@@ -48,7 +48,9 @@ def load_data(root_dir: str, tags: list, start_date: str = None, end_date: str =
 
 def filter_korean(s):
     try:
-        return re.sub('[^\uAC00-\uD7AF]+', '', s)
+        s = re.sub('[^\uAC00-\uD7AF ]+', '', s.replace('\n', ' '))
+        s = re.sub(' +', ' ', s)
+        return s.strip()
     except:
         return ''
 
