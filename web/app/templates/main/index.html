@@ -27,10 +27,17 @@
     <img src="{{ url_for('main.display_image', filename=filename) }}" style="width: 50%; height: 50%">
 </div>
 
-<h3>결과</h3>
-<div style="border: #000000">
+<h3>문장 생성</h3>
+<div>
     <p>
-        {{ get_result(filename) }}
+        {{ get_sentence_result(filename) }}
+    </p>
+</div>
+
+<h3>해시태그</h3>
+<div>
+    <p>
+        {{ get_hashtag_result(filename) }}
     </p>
 </div>
 {% endif %}
