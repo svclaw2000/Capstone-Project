@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>인스타 본문 생성</title>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" ></script>
+<!--    <script src="https://d3js.org/d3.v3.min.js"></script>-->
+<!--    <script src="https://rawgit.com/jasondavies/d3-cloud/master/build/d3.layout.cloud.js" type="text/JavaScript"></script>-->
+</head>
+<body>
+<script>
+    function upload_image() {
+        var form = document.userimage
+        form.submit()
+    }
+</script>
+
+<form action="/translate" method="post"
+      enctype="multipart/form-data" name="userimage">
+    <input type="file" name="file" />
+    <input type="submit" value="Submit">
+</form>
+
+{% if filename %}
+<h3>입력 사진</h3>
+<div>
+    <img src="{{ url_for('main.display_image', filename=filename) }}" style="width: 50%; height: 50%">
+</div>
+
+<h3>결과</h3>
+<div style="border: #000000">
+    <p>
+        {{ get_result(filename) }}
+    </p>
+</div>
+{% endif %}
+</body>
+</html>
