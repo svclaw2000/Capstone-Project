@@ -15,17 +15,12 @@ main = Blueprint('main', __name__, url_prefix='/')
 
 target_size = 256
 max_seq_length, n_chars, output_dict, output_chars = pickle.load(open('seqlen_nchar_outdict_outchar.pkl', 'rb'))
-use_hashtag = pickle.load(open('usehash.pkl', 'rb'))
 
 with tf.device('/gpu:0'):
     sess = tf.Session(config=tf.ConfigProto(allow_soft_placement=True,
                                             log_device_placement=True))
-    sess2 = tf.Session(config=tf.ConfigProto(allow_soft_placement=True,
-                                            log_device_placement=True))
 saver = tf.train.import_meta_graph('ver15.meta')
 saver.restore(sess, 'ver15')
-saver2 = tf.train.import_meta_graph('ver16.meta')
-saver2.restore(sess2, 'ver16')
 
 @main.route('/', methods=['GET'])
 def index():
@@ -38,7 +33,7 @@ def translate_image():
         filename = 'img_%s.jpg' %datetime.now().strftime('%Y%m%d_%H%M%S')
         path = 'app/static/images/%s' %filename
         f.save(path)
-        return render_template('/main/index.html', filename=filename, get_sentence_result=get_sentence_result, get_hashtag_result=get_hashtag_result)
+        return render_template('/main/index.html', filename=filename, get_sentence_result=get_sentence_result)
 
 def get_image_from_path(path):
     image = Image.open(path)
@@ -63,10 +58,10 @@ def get_sentence_result(filename):
     image = get_array_from_path(path)
     return translate(image[:,:,:3])
 
-def get_hashtag_result(filename):
-    path = 'app/static/images/%s' %filename
-    image = get_array_from_path(path)
-    return translate2(image[:,:,:3])
+# def get_hashtag_result(filename):
+#     path = 'app/static/images/%s' %filename
+#     image = get_array_from_path(path)
+#     return translate2(image[:,:,:3])
 
 def translate(image):
     dec_inp = np.zeros(shape=(1, max_seq_length, n_chars), dtype='float32')
@@ -80,10 +75,10 @@ def translate(image):
     translated = ''.join(decoded[:end])
     return translated
 
-def translate2(image):
-    result = sess2.run('hashtag/dense_3/BiasAdd:0',
-                       feed_dict={'Placeholder:0': [image]})[0]
-    return ' '.join(use_hashtag[[i for i,p in enumerate(result) if p > 0.01]])
+# def translate2(image):
+#     result = sess.run('hashtag/dense_3/BiasAdd:0',
+#                        feed_dict={'Placeholder:0': [image]})[0]
+#     return ' '.join(use_hashtag[[i for i,p in enumerate(result) if p > 0.01]])
 
 @main.route('/display/<filename>')
 def display_image(filename):
