@@ -1,6 +1,5 @@
 import pandas as pd
 from konlpy.tag import Komoran
-from textrank import KeywordSummarizer
 import emoji
 import re
 import numpy as np
