@@ -24,7 +24,7 @@
   - CNN + 감정 태깅 + RNN
   - CNN + seq2seq
   - Stacked Autoencoder + (LSTM / Seq2Seq / GAN)
-- 데이터의 특성에 맞는 모델을 선택하지 못하여 
+- 데이터의 특성에 맞는 모델을 선택하지 못하여 실패
 
 ## 📱 Test Environments
 ```
